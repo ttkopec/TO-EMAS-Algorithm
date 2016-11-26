@@ -8,7 +8,6 @@ public class Agent {
     private final double fitness;
     private final double energy;
 
-
     public Agent(Genotype genotype, double fitness, double energy) {
         this.genotype = genotype;
         this.fitness = fitness;
