@@ -1,25 +1,34 @@
 package pl.edu.agh.to.action;
 
+import pl.edu.agh.to.Operator;
 import pl.edu.agh.to.agent.Agent;
 
+import java.util.Optional;
+
 public class Interaction {
-    private final Agent agent;
-    private final Agent agent2;
+    private final Agent firstAgent;
+    private final Agent secondAgent;
 
-    public Interaction(Agent agent, Agent agent2) {
-        this.agent = agent;
-        this.agent2 = agent2;
+    public Interaction(Agent firstAgent, Agent secondAgent) {
+        this.firstAgent = firstAgent;
+        this.secondAgent = secondAgent;
     }
 
-    public void interact(){
-
+    public Optional<Agent> interact(){
+        Operator o = new Operator() {
+            @Override
+            public Optional<Agent> operate(Agent firstAgent, Agent secondAgent) {
+                return null;
+            }
+        };
+        return o.operate(firstAgent, secondAgent);
     }
 
-    public Agent getAgent() {
-        return agent;
+    public Agent getFirstAgent() {
+        return firstAgent;
     }
 
-    public Agent getAgent2() {
-        return agent2;
+    public Agent getSecondAgent() {
+        return secondAgent;
     }
 }
