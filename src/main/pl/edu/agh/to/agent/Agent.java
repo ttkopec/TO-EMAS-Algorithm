@@ -9,7 +9,7 @@ public class Agent {
     private double energy;
     private Operator operator;
 
-    public Agent(Genotype genotype, double energy,Operator operator) {
+    public Agent(Genotype genotype, double energy, Operator operator) {
         this.genotype = genotype;
         this.energy = energy;
         this.operator=operator;
