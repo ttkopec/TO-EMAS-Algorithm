@@ -1,0 +1,22 @@
+group 'to2'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'java'
+apply plugin: 'scala'
+
+sourceCompatibility = 1.5
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile group: 'org.scala-lang', name: 'scala-library', version: '2.12.0'
+    compile group: 'com.typesafe.akka', name: 'akka-actor_2.12', version: '2.4.14'
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+    testCompile group: 'org.scala-lang', name: 'scala-library', version: '2.12.0'
+}
+
+tasks.withType(ScalaCompile) {
+    scalaCompileOptions.useAnt = false
+}
