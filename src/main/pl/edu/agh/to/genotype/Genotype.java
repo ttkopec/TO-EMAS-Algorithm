@@ -6,7 +6,8 @@ public class Genotype {
     public Genotype(String genotyp) {
         this.genotyp = genotyp;
     }
-    public String toString(){
+
+    public String toString() {
         return genotyp;
     }
 }

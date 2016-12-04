@@ -5,21 +5,22 @@ import pl.edu.agh.to.operators.Operator;
 
 public class Agent {
 
-    private  Genotype genotype;
+    private Genotype genotype;
     private double energy;
     private Operator operator;
 
-    public Agent(Genotype genotype, double energy,Operator operator) {
+    public Agent(Genotype genotype, double energy, Operator operator) {
         this.genotype = genotype;
         this.energy = energy;
-        this.operator=operator;
+        this.operator = operator;
 
     }
 
     public Genotype getGenotype() {
         return genotype;
     }
-    public void setGenotype(Genotype genotype){
+
+    public void setGenotype(Genotype genotype) {
         this.genotype = genotype;
 
     }

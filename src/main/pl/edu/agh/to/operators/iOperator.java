@@ -1,7 +1,6 @@
 package pl.edu.agh.to.operators;
-import  pl.edu.agh.to.agent.Agent;
 
-import java.util.Optional;
+import pl.edu.agh.to.agent.Agent;
 
 
 /**
@@ -9,12 +8,12 @@ import java.util.Optional;
  */
 public interface iOperator {
 
-     double evaluation(Agent subject);
+    double evaluation(Agent subject);
 
-     boolean selection(Agent subject);
+    boolean selection(Agent subject);
 
-     Agent copulate(Agent father,Agent mother);
+    Agent copulate(Agent father, Agent mother);
 
-     Agent mutate(Agent subject,int degree);
+    Agent mutate(Agent subject, int degree);
 
 }
