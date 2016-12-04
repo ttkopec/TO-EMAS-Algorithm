@@ -1,5 +1,85 @@
 package pl.edu.agh.to.core
 
-class CoreSystem {
+import akka.actor.ActorSystem
+import akka.pattern.ask
+import akka.util.Timeout
+import pl.edu.agh.to.agent.Agent
+import pl.edu.agh.to.genotype.Genotype
+import pl.edu.agh.to.operators.Operator
 
+import scala.concurrent.Future
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.duration._
+import scala.language.postfixOps
+import scala.util.{Failure, Random, Success}
+
+class CoreSystem(islandsNumber: Int,
+                 roundsPerTick: Int,
+                 islandPopulation: Int,
+                 operator: Operator,
+                 agentProvider: Operator => Agent) {
+
+  import Island._
+
+  val actorSystem = ActorSystem("Emas_simulation")
+  val islandProps = Island.props(operator, roundsPerTick)
+  implicit val timeout = Timeout(2 seconds)
+  val islands = for (i <- 1 to islandsNumber) yield actorSystem.actorOf(islandProps, s"Island_$i")
+  val delay = islandPopulation * roundsPerTick millis
+
+  for (island <- islands) {
+    island ! Initialize((0 until islandsNumber).map(_ => agentProvider(operator)))
+  }
+  actorSystem.scheduler.schedule(10 millis, delay) {
+    val questions = for (island <- islands) yield island -> island ? Tick
+    questions.foreach {
+      case (island, future) => future.onComplete {
+        case Failure(cause) =>
+          println(s"Execution for ${island.path.name} failed due to:")
+          cause.printStackTrace()
+        case Success(_) =>
+      }
+    }
+  }
+
+  actorSystem.scheduler.schedule(2 seconds, 1 second) {
+    islands.sortBy(_ => Random.nextInt()).grouped(2).collect {
+      case IndexedSeq(a, b) =>
+        a ! Migrate(b)
+    }
+  }
+
+  var islandsEnded = 0
+  actorSystem.scheduler.scheduleOnce(10 seconds) {
+    Future.sequence(islands.map(_ ? Summary)).map(_.collect{
+      case AgentMessage(agent) =>
+        agent
+    }).onComplete {
+      case Success(agents) =>
+        val bestFitnes = agents.maxBy(_.getFitness)
+        println(s"Simulation finished with fitness level: ${bestFitnes.getFitness} and genotype: ${bestFitnes.getGenotype.getGenotyp}")
+        actorSystem.terminate()
+      case Failure(cause) =>
+        println(s"Simluation failed due to:")
+        cause.printStackTrace()
+        actorSystem.terminate()
+    }
+  }
+
+
+}
+
+object CoreSystem {
+
+  private val testOperator = new Operator()
+
+  private def testAgentProvider(operator: Operator): Agent = {
+    val genotype = new Genotype((Random.nextDouble() * 10).toString)
+    new Agent(genotype, 100, operator)
+  }
+
+
+  def main(args: Array[String]): Unit = {
+      val system = new CoreSystem(10, 20, 30, testOperator, testAgentProvider)
+  }
 }
