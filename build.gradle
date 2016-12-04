@@ -1,4 +1,4 @@
-group 'to2'
+group 'pl.edu.agh.to.emas'
 version '1.0-SNAPSHOT'
 
 apply plugin: 'java'
