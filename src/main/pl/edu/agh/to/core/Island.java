@@ -1,4 +1,4 @@
-package pl.edu.agh.to;
+package pl.edu.agh.to.core;
 
 import java.util.function.Predicate;
 

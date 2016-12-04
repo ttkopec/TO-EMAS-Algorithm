@@ -1,8 +1,8 @@
-package pl.edu.agh.to
+package pl.edu.agh.to.core
 
 import akka.actor.{Actor, ActorRef, ActorSystem, Props}
 import akka.dispatch.ExecutionContexts
-import pl.edu.agh.to.IslandActor.{Agent, MigrateAgents, Stop}
+import pl.edu.agh.to.core.IslandActor.{Agent, MigrateAgents, Stop}
 
 import scala.collection.mutable.{Set => MSet}
 import scala.concurrent.duration._

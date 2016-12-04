@@ -1,5 +1,4 @@
-package pl.edu.agh.to
-
+package pl.edu.agh.to.core
 import scala.collection.mutable.{Set => MSet}
 import scala.language.implicitConversions
 
