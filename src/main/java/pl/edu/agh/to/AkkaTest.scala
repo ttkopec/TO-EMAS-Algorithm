@@ -1,3 +1,5 @@
+package pl.edu.agh.to
+
 import akka.actor.{Actor, Props}
 
 class HelloWorld extends Actor {

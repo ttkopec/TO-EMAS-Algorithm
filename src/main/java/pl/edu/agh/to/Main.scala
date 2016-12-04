@@ -1,3 +1,5 @@
+package pl.edu.agh.to
+
 object Main {
 
   def main(args: Array[String]): Unit = {

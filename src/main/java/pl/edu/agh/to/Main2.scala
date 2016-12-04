@@ -1,9 +1,6 @@
-import akka.actor.ActorSystem
-import akka.actor.Props
-import akka.actor.ActorRef
-import akka.actor.Actor
-import akka.actor.ActorLogging
-import akka.actor.Terminated
+package pl.edu.agh.to
+
+import akka.actor.{Actor, ActorLogging, ActorRef, ActorSystem, Props, Terminated}
 
 object Main2 {
 

@@ -1,6 +1,8 @@
-import Island.{Agent, MigrateAgents, Stop}
+package pl.edu.agh.to
+
 import akka.actor.{Actor, ActorRef, ActorSystem, Props}
 import akka.dispatch.ExecutionContexts
+import pl.edu.agh.to.Island.{Agent, MigrateAgents, Stop}
 
 import scala.collection.mutable.{Set => MSet}
 import scala.concurrent.duration._
@@ -85,6 +87,7 @@ object TestMain {
     a ! Agent(7, 9)
     b ! Agent(12, 4)
     b ! Agent(8, 10)
+
 
     system.scheduler.schedule(10 milli, 1 second) {
       a ! defaultCrossOver
