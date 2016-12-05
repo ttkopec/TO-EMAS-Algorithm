@@ -22,7 +22,8 @@ public class Operator implements  iOperator{
         Random rand=new Random();
 
         for(int i=0;i<degree;i++){
-            int index=rand.nextInt()%genotype.length();
+            int index=rand.nextInt()%(genotype.length()-1);
+            index++;
             int value= rand.nextInt()%9+1;
             mutation.replace(index,index+1,Integer.toString(value));
         }
