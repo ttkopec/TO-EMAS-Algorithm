@@ -55,9 +55,12 @@ class CoreSystem(islandsNumber: Int,
       case AgentMessage(agent) =>
         agent
     }).onComplete {
-      case Success(agents) =>
+      case Success(agents) if agents.nonEmpty =>
         val bestFitnes = agents.maxBy(_.getFitness)
         println(s"Simulation finished with fitness level: ${bestFitnes.getFitness} and genotype: ${bestFitnes.getGenotype.getGenotyp}")
+        actorSystem.terminate()
+      case Success(agents) =>
+        println("No agents in system")
         actorSystem.terminate()
       case Failure(cause) =>
         println(s"Simluation failed due to:")

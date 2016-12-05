@@ -20,7 +20,8 @@ class Island(operator: iOperator, roundsPerTick: Int) extends Actor {
     case Initialize(initAgents) =>
       agents ++= initAgents
     case Summary =>
-      sender() ! agents.maxBy(_.getFitness)
+      sender() ! (if (agents.nonEmpty) AgentMessage(agents.maxBy(_.getFitness)) else ())
+
     case Tick =>
       val toSend = sender()
       Future {
@@ -37,10 +38,7 @@ class Island(operator: iOperator, roundsPerTick: Int) extends Actor {
       agents += agent
 
     case Migrate(isle) =>
-      isle ! AgentMessage(agents.maxBy(_.getFitness))
-
-    case Summary =>
-      sender() ! AgentMessage(agents.maxBy(_.getFitness))
+      isle ! (if (agents.nonEmpty) AgentMessage(agents.maxBy(_.getFitness)) else ())
   }
 
   def singleIteration(agents: Set[Agent]): Set[Agent] = {
@@ -51,16 +49,16 @@ class Island(operator: iOperator, roundsPerTick: Int) extends Actor {
         Island.temporaryExchange(a, b) //remember to change when implemented
     }
     agentsSnapshot.retain(_.isAlive)
-    val mutationNumber = Random.nextInt(agents.size / 5) + 1
-    for (agent <- agentsSnapshot.toStream.sortBy(_ => Random.nextInt()).take(mutationNumber)) {
-      operator.mutate(agent, Random.nextInt(4) + 1)
-    }
-    agentsSnapshot.retain(_.isAlive)
+//    val mutationNumber = Random.nextInt(agents.size / 5) + 1
+//    for (agent <- agentsSnapshot.toStream.sortBy(_ => Random.nextInt()).take(mutationNumber)) {
+//      operator.mutate(agent, Random.nextInt(4) + 1)
+//    }
+//    agentsSnapshot.retain(_.isAlive)
     val newGeneration = agents.toStream.sortBy(_ => Random.nextInt()).grouped(2).collect {
       case Seq(a, b) =>
         operator.copulate(a, b)
     }.toSet
-    newGeneration & agentsSnapshot
+    newGeneration | agentsSnapshot
   }
 }
 
