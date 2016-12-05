@@ -21,11 +21,11 @@ class CoreSystem(islandsNumber: Int,
 
   import Island._
 
-  val actorSystem = ActorSystem("Emas_simulation")
+  val actorSystem = ActorSystem("EMAS_simulation")
   val islandProps = Island.props(operator, roundsPerTick)
   implicit val timeout = Timeout(2 seconds)
   val islands = for (i <- 1 to islandsNumber) yield actorSystem.actorOf(islandProps, s"Island_$i")
-  val delay = islandPopulation * roundsPerTick millis
+  val delay = islandPopulation * roundsPerTick micros
 
   for (island <- islands) {
     island ! Initialize((0 until islandsNumber).map(_ => agentProvider(operator)))
