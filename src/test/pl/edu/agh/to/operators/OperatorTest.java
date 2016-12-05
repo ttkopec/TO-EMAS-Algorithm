@@ -30,7 +30,10 @@ public class OperatorTest {
     @Test
     public void testMutation(){
         agent.setGenotype(new Genotype("1230"));
-        assertNotEquals(agent, agent.mutate(1));
+        assertNotEquals(agent, agent.mutate(10));
+
+
+
     }
 
     @Test

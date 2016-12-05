@@ -5,6 +5,8 @@ import pl.edu.agh.to.genotype.Genotype;
 
 import java.util.Random;
 
+import static java.lang.Math.abs;
+
 /**
  * Created by krzys on 04.12.2016.
  */
@@ -27,9 +29,9 @@ public class Operator implements iOperator {
         Random rand = new Random();
 
         for (int i = 0; i < degree; i++) {
-            int index = rand.nextInt() % genotype.length();
-            int value = rand.nextInt() % 9 + 1;
-            mutation.replace(index, index + 1, Integer.toString(value));
+            int index = abs(rand.nextInt() % mutation.length());
+            int value = abs(rand.nextInt() % 9 + 1);
+            mutation=mutation.replace(index, index + 1, Integer.toString(value));
         }
         subject.setGenotype(new Genotype(mutation.toString()));
         return subject;
@@ -56,7 +58,7 @@ public class Operator implements iOperator {
 
         int i;
         for (i = 0; i < minSize; i++) {
-            int choice = rand.nextInt() % 2;
+            int choice = abs(rand.nextInt() % 2);
             if (choice == 1)
                 genotype.append(fatherGen.charAt(i));
             else
