@@ -41,4 +41,11 @@ public class Agent {
         return operator.selection(this);
     }
 
+    public Agent mutate(int degree) {
+        return operator.mutate(this, degree);
+    }
+
+    public Agent cross(Agent entity){
+        return operator.copulate(this, entity);
+    }
 }
