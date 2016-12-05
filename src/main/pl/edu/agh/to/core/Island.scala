@@ -5,6 +5,7 @@ import java.util.concurrent.ExecutionException
 import akka.actor.{Actor, ActorRef, Props}
 import pl.edu.agh.to.agent.Agent
 import pl.edu.agh.to.core.Island._
+import pl.edu.agh.to.core.Reaper.WatchMe
 import pl.edu.agh.to.operators.{Operator, iOperator}
 
 import scala.collection.mutable.{Set => MSet}
@@ -15,10 +16,13 @@ import scala.util.{Failure, Random, Success}
 class Island(operator: iOperator, roundsPerTick: Int) extends Actor {
   import context.dispatcher
   private val agents: ParSet[Agent] = ParSet.empty
+  private var reaper: ActorRef = _
 
   override def receive: Receive = {
-    case Initialize(initAgents) =>
+    case Initialize(initAgents, r) =>
       agents ++= initAgents
+      reaper = r
+      reaper ! WatchMe(self)
     case Summary =>
       sender() ! (if (agents.nonEmpty) AgentMessage(agents.maxBy(_.getFitness)) else ())
 
@@ -39,14 +43,17 @@ class Island(operator: iOperator, roundsPerTick: Int) extends Actor {
 
     case Migrate(isle) =>
       isle ! (if (agents.nonEmpty) AgentMessage(agents.maxBy(_.getFitness)) else ())
+
+    case Stop =>
+      context.stop(self)
   }
 
   def singleIteration(agents: Set[Agent]): Set[Agent] = {
     val agentsSnapshot = agents.to[MSet]
-    val randomEncounters = agentsSnapshot.toStream.sortBy(_ => Random.nextInt()).grouped(2)
-    randomEncounters.collect {
-      case Seq(a, b) =>
-        Island.temporaryExchange(a, b) //remember to change when implemented
+    agentsSnapshot.toSeq.sortBy(_ => Random.nextInt()).grouped(2).foreach {s =>
+      if (s.size == 2) {
+        Island.temporaryExchange(s.head, s(1))
+      }
     }
     agentsSnapshot.retain(_.isAlive)
 //    val mutationNumber = Random.nextInt(agents.size / 5) + 1
@@ -54,8 +61,8 @@ class Island(operator: iOperator, roundsPerTick: Int) extends Actor {
 //      operator.mutate(agent, Random.nextInt(4) + 1)
 //    }
 //    agentsSnapshot.retain(_.isAlive)
-    val newGeneration = agents.toStream.sortBy(_ => Random.nextInt()).grouped(2).collect {
-      case Seq(a, b) =>
+    val newGeneration = agentsSnapshot.toStream.sortBy(_ => Random.nextInt()).grouped(2).collect {
+      case Stream(a, b) =>
         operator.copulate(a, b)
     }.toSet
     newGeneration | agentsSnapshot
@@ -74,12 +81,12 @@ object Island {
 
   case object Summary
 
-  case class Initialize(agents: Seq[Agent])
+  case class Initialize(agents: Seq[Agent], reaper: ActorRef)
 
 
   def temporaryExchange(a: Agent, b: Agent): Unit = {
     val (winner, looser) = if (a.getFitness >= b.getFitness) (a, b) else (b, a)
-    val transferredEnergy = Math.min(looser.getEnergy, 10)
+    val transferredEnergy = Math.min(looser.getEnergy, 1)
     winner.setEnergy(winner.getEnergy + transferredEnergy)
     looser.setEnergy(looser.getEnergy - transferredEnergy)
   }

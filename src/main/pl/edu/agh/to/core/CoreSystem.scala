@@ -1,6 +1,6 @@
 package pl.edu.agh.to.core
 
-import akka.actor.ActorSystem
+import akka.actor.{ActorSystem, Props}
 import akka.pattern.ask
 import akka.util.Timeout
 import pl.edu.agh.to.agent.Agent
@@ -24,11 +24,12 @@ class CoreSystem(islandsNumber: Int,
   val actorSystem = ActorSystem("EMAS_simulation")
   val islandProps = Island.props(operator, roundsPerTick)
   implicit val timeout = Timeout(2 seconds)
+  val reaper = actorSystem.actorOf(Props[Reaper], s"Reaper")
   val islands = for (i <- 1 to islandsNumber) yield actorSystem.actorOf(islandProps, s"Island_$i")
-  val delay = islandPopulation * roundsPerTick micros
+  val delay = islandPopulation * roundsPerTick * 20 micros
 
   for (island <- islands) {
-    island ! Initialize((0 until islandsNumber).map(_ => agentProvider(operator)))
+    island ! Initialize((0 until islandPopulation).map(_ => agentProvider(operator)), reaper)
   }
   actorSystem.scheduler.schedule(10 millis, delay) {
     val questions = for (island <- islands) yield island -> island ? Tick
@@ -58,14 +59,16 @@ class CoreSystem(islandsNumber: Int,
       case Success(agents) if agents.nonEmpty =>
         val bestFitnes = agents.maxBy(_.getFitness)
         println(s"Simulation finished with fitness level: ${bestFitnes.getFitness} and genotype: ${bestFitnes.getGenotype.getGenotyp}")
-        actorSystem.terminate()
+        islands.foreach(_ ! Stop)
       case Success(agents) =>
         println("No agents in system")
         actorSystem.terminate()
+        islands.foreach(_ ! Stop)
       case Failure(cause) =>
         println(s"Simluation failed due to:")
         cause.printStackTrace()
         actorSystem.terminate()
+        islands.foreach(_ ! Stop)
     }
   }
 
