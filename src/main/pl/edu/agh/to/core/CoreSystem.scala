@@ -80,7 +80,7 @@ object CoreSystem {
   private val testOperator = new Operator()
 
   private def testAgentProvider(operator: Operator): Agent = {
-    val genotype = new Genotype((Random.nextDouble() * 10).toString)
+    val genotype = new Genotype((Random.nextDouble()).toString)
     new Agent(genotype, 100, operator)
   }
 
