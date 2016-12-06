@@ -1,10 +1,10 @@
-group 'to2'
+group 'pl.edu.agh.to.emas'
 version '1.0-SNAPSHOT'
 
 apply plugin: 'java'
 apply plugin: 'scala'
 
-sourceCompatibility = 1.5
+sourceCompatibility = 1.8
 
 repositories {
     mavenCentral()

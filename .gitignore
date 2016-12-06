@@ -1,0 +1,16 @@
+*.class
+
+.idea/
+*.iws
+*.iml
+*.ipr
+
+*.jar
+*.war
+*.ear
+
+
+# Gradle:
+.idea
+.gradle
+/build/
