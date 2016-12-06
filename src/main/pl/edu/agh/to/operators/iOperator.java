@@ -8,7 +8,7 @@ import pl.edu.agh.to.agent.Agent;
  */
 public interface iOperator {
 
-    double evaluation(Agent subject);
+    int evaluation(Agent subject);
 
     boolean selection(Agent subject);
 
