@@ -25,7 +25,7 @@ public class Agent {
 
     }
 
-    public double getFitness() {
+    public int getFitness() {
         return operator.evaluation(this);
     }
 

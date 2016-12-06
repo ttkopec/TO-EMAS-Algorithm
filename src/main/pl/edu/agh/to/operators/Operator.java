@@ -12,8 +12,8 @@ import static java.lang.Math.abs;
  */
 public class Operator implements iOperator {
 
-    public double evaluation(Agent subject) {
-        return Double.parseDouble(subject.getGenotype().toString());
+    public int evaluation(Agent subject) {
+        return Integer.parseInt(subject.getGenotype().toString());
     }
     public boolean selection(Agent subject){
         return subject.getEnergy() > 0;
