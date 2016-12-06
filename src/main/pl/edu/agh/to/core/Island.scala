@@ -65,11 +65,11 @@ class Island(operator: iOperator, roundsPerTick: Int) extends Actor {
       }
     }
     agentsSnapshot.retain(_.isAlive)
-    //    val mutationNumber = Random.nextInt(agents.size / 5) + 1
-    //    for (agent <- agentsSnapshot.toStream.sortBy(_ => Random.nextInt()).take(mutationNumber)) {
-    //      operator.mutate(agent, Random.nextInt(4) + 1)
-    //    }
-    //    agentsSnapshot.retain(_.isAlive)
+    val mutationNumber = Random.nextInt(agents.size / 5) + 1
+    for (agent <- agentsSnapshot.toStream.sortBy(_ => Random.nextInt()).take(mutationNumber)) {
+      operator.mutate(agent, Random.nextInt(4) + 1)
+    }
+    agentsSnapshot.retain(_.isAlive)
     val newGeneration = agentsSnapshot.toStream.sortBy(_ => Random.nextInt()).grouped(2).collect {
       case Stream(a, b) =>
         operator.copulate(a, b)
