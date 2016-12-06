@@ -1,18 +1,14 @@
 package pl.edu.agh.to.core
 
-import java.util.concurrent.ExecutionException
-
 import akka.actor.{Actor, ActorRef, Props}
 import pl.edu.agh.to.agent.Agent
 import pl.edu.agh.to.core.Island._
 import pl.edu.agh.to.core.Reaper.WatchMe
 import pl.edu.agh.to.operators.{Operator, iOperator}
 
-import scala.collection.mutable
 import scala.collection.mutable.{Set => MSet}
-import scala.collection.parallel.mutable.ParSet
 import scala.concurrent.Future
-import scala.util.{Failure, Random, Success}
+import scala.util.Random
 
 class Island(operator: iOperator, roundsPerTick: Int) extends Actor {
 

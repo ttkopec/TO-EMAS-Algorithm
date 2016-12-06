@@ -28,21 +28,25 @@ class CoreSystem(islandsNumber: Int,
   val islands = for (i <- 1 to islandsNumber) yield actorSystem.actorOf(islandProps, s"Island_$i")
   val delay = islandPopulation * roundsPerTick * 20 micros
 
+  //initialize simulation
   for (island <- islands) {
     island ! Initialize((0 until islandPopulation).map(_ => agentProvider(operator)), reaper)
   }
+
+  //schedule simulation epochs execution
   actorSystem.scheduler.schedule(10 millis, delay) {
     for (island <- islands) island ! Tick
   }
 
-  actorSystem.scheduler.schedule(2 seconds, 1 second) {
+  //schedule agents migration
+  actorSystem.scheduler.schedule(2 seconds, 400 millis) {
     islands.sortBy(_ => Random.nextInt()).grouped(2).collect {
       case IndexedSeq(a, b) =>
         a ! Migrate(b)
     }
   }
 
-  var islandsEnded = 0
+  //schedule simulation ending
   actorSystem.scheduler.scheduleOnce(10 seconds) {
     Future.sequence(islands.map(_ ? Summary)).map(_.collect{
       case AgentMessage(agent) =>
