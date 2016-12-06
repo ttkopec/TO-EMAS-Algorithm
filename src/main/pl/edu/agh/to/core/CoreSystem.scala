@@ -32,15 +32,7 @@ class CoreSystem(islandsNumber: Int,
     island ! Initialize((0 until islandPopulation).map(_ => agentProvider(operator)), reaper)
   }
   actorSystem.scheduler.schedule(10 millis, delay) {
-    val questions = for (island <- islands) yield island -> island ? Tick
-    questions.foreach {
-      case (island, future) => future.onComplete {
-        case Failure(cause) =>
-          println(s"Execution for ${island.path.name} failed due to:")
-          cause.printStackTrace()
-        case Success(_) =>
-      }
-    }
+    for (island <- islands) island ! Tick
   }
 
   actorSystem.scheduler.schedule(2 seconds, 1 second) {
@@ -80,7 +72,7 @@ object CoreSystem {
   private val testOperator = new Operator()
 
   private def testAgentProvider(operator: Operator): Agent = {
-    val genotype = new Genotype((Random.nextDouble()).toString)
+    val genotype = new Genotype((Random.nextDouble() * 10).toString)
     new Agent(genotype, 100, operator)
   }
 
