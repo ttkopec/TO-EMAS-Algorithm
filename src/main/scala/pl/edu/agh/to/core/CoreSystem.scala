@@ -7,8 +7,8 @@ import pl.edu.agh.to.agent.{Agent, AgentConfig}
 import pl.edu.agh.to.genotype.Genotype
 import pl.edu.agh.to.operators.Operators
 
-import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 import scala.concurrent.duration._
 import scala.language.postfixOps
 import scala.util.{Failure, Random, Success}
@@ -77,7 +77,7 @@ object CoreSystem {
 
   private def testAgentProvider(operator: Operators): Agent = {
     val genotype = new Genotype(Random.nextInt(1000).toString)
-    new Agent(genotype, 100, new AgentConfig(100, 20, 0, new Operators))
+    new Agent(genotype, 100, new AgentConfig(100, 20, 0, new Operators()))
   }
 
 
