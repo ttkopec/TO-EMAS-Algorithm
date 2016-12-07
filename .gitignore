@@ -29,3 +29,5 @@ buildNumber.properties
 .idea/gradle.xml
 .idea/libraries
 /build/
+
+*.swp
