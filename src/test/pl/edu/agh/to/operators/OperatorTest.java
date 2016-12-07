@@ -10,7 +10,8 @@ import static org.junit.Assert.*;
  * Created by tkopec on 04.12.16.
  */
 public class OperatorTest {
-    private Agent agent = new Agent(null, 0, new Operator());
+    private Operator operator = new Operator();
+    private Agent agent = new Agent(null, 0, operator);
 
     @Test(expected = NumberFormatException.class)
     public void testEvaluation() {
@@ -19,7 +20,7 @@ public class OperatorTest {
     }
 
     @Test
-    public void testSelection(){
+    public void testSelection() {
         agent.setEnergy(-1.0);
         assertFalse(agent.isAlive());
 
@@ -28,16 +29,15 @@ public class OperatorTest {
     }
 
     @Test
-    public void testMutation(){
+    public void testMutation() {
         agent.setGenotype(new Genotype("1230"));
-        assertNotEquals(agent, agent.mutate(10));
-
-
-
+        assertNotEquals(
+                new Agent(agent.getGenotype(), agent.getEnergy(), operator),
+                agent.mutate(100));
     }
 
     @Test
-    public void testCrossing(){
+    public void testCrossing() {
         agent.setGenotype(new Genotype("123445665432432524566857634"));
         agent.setEnergy(50);
         assertNotEquals(agent, agent.cross(new Agent(new Genotype("0984324"), 10, null)));
