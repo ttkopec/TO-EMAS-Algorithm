@@ -77,7 +77,12 @@ object CoreSystem {
 
   private def testAgentProvider(operator: Operators): Agent = {
     val genotype = new Genotype(Random.nextInt(1000).toString)
+<<<<<<< HEAD
     new Agent(genotype, 100, new AgentConfig(100, 20, 0, new Operators()))
+=======
+    //TODO set proper values
+    new Agent(genotype, 100, new AgentConfig(0, 0, 0, operator))
+>>>>>>> fix
   }
 
 

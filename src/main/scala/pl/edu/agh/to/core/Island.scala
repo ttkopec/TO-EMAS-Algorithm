@@ -4,7 +4,11 @@ import akka.actor.{Actor, ActorRef, Props}
 import pl.edu.agh.to.agent.Agent
 import pl.edu.agh.to.core.Island._
 import pl.edu.agh.to.core.Reaper.WatchMe
+<<<<<<< HEAD
 import pl.edu.agh.to.operators.{Operators, iOperators}
+=======
+import pl.edu.agh.to.operators.{Operator, iOperator}
+>>>>>>> fix
 
 import scala.collection.mutable.{Set => MSet}
 import scala.concurrent.Future
