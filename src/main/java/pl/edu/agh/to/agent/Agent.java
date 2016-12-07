@@ -1,28 +1,32 @@
 package pl.edu.agh.to.agent;
 
-import pl.edu.agh.to.FitnessEvaluator;
 import pl.edu.agh.to.genotype.Genotype;
+import pl.edu.agh.to.operators.Operators;
 
 public class Agent {
 
-    private final Genotype genotype;
-    private final FitnessEvaluator evaluator;
-    private final double minimalEnergy;
+    private Genotype genotype;
     private double energy;
 
-    public Agent(Genotype genotype, FitnessEvaluator evaluator, double energy, double minimalEnergy) {
+    private AgentConfig config;
+
+    public Agent(Genotype genotype, double energy, AgentConfig config) {
         this.genotype = genotype;
-        this.evaluator = evaluator;
         this.energy = energy;
-        this.minimalEnergy = minimalEnergy;
+        this.config = config;
     }
 
     public Genotype getGenotype() {
         return genotype;
     }
 
-    public double getFitness() {
-        return evaluator.evaluate(genotype);
+    public void setGenotype(Genotype genotype) {
+        this.genotype = genotype;
+
+    }
+
+    public int getFitness() {
+        return config.getOperator().evaluation(this);
     }
 
     public double getEnergy() {
@@ -34,7 +38,10 @@ public class Agent {
     }
 
     public boolean isAlive() {
-        return energy >= minimalEnergy;
+        return config.getDeathEnergy() < energy;
     }
 
+    public AgentConfig getConfig() {
+        return config;
+    }
 }

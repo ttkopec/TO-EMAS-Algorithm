@@ -1,4 +1,4 @@
-package pl.edu.agh.to;
+package pl.edu.agh.to.agent;
 
 import pl.edu.agh.to.genotype.Genotype;
 

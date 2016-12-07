@@ -3,7 +3,7 @@ package pl.edu.agh.to.core
 import akka.actor.{ActorSystem, Props}
 import akka.pattern.ask
 import akka.util.Timeout
-import pl.edu.agh.to.agent.Agent
+import pl.edu.agh.to.agent.{Agent, AgentConfig}
 import pl.edu.agh.to.genotype.Genotype
 import pl.edu.agh.to.operators.Operators
 
@@ -77,7 +77,7 @@ object CoreSystem {
 
   private def testAgentProvider(operator: Operators): Agent = {
     val genotype = new Genotype(Random.nextInt(1000).toString)
-    new Agent(genotype, 100, operator)
+    new Agent(genotype, 100, new AgentConfig(100, 20, 0, new Operators))
   }
 
 
