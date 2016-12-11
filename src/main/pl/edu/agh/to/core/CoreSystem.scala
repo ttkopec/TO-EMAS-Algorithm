@@ -1,5 +1,8 @@
 package pl.edu.agh.to.core
 
+import java.io.FileInputStream
+import java.util.Properties
+
 import akka.actor.{ActorSystem, Props}
 import akka.pattern.ask
 import akka.util.Timeout
@@ -13,13 +16,23 @@ import scala.concurrent.duration._
 import scala.language.postfixOps
 import scala.util.{Failure, Random, Success}
 
-class CoreSystem(islandsNumber: Int,
-                 roundsPerTick: Int,
-                 islandPopulation: Int,
+val PROPERTIES_FILE = "emas.properties";
+val ALGORITHM_NAME_PROP = "algorithm-name";
+
+val ISLANDS_NUMBER_PROP = "islands-number";
+val ROUNDS_PER_TICK_PROP = "rounds-per-tick";
+val ISLAND_POPULATION_PROP = "island-population";
+
+class CoreSystem(islandsNumber: Integer,
+                 roundsPerTick: Integer,
+                 islandPopulation: Integer,
+                 algorithmName: String,
                  operator: Operator,
                  agentProvider: Operator => Agent) {
 
   import Island._
+
+  println("Init " + algorithmName)
 
   val actorSystem = ActorSystem("EMAS_simulation")
   val islandProps = Island.props(operator, roundsPerTick)
@@ -67,8 +80,6 @@ class CoreSystem(islandsNumber: Int,
         islands.foreach(_ ! Stop)
     }
   }
-
-
 }
 
 object CoreSystem {
@@ -82,6 +93,27 @@ object CoreSystem {
 
 
   def main(args: Array[String]): Unit = {
-      val system = new CoreSystem(10, 20, 30, testOperator, testAgentProvider)
+
+    var algorithmName: String = _;
+
+    var islandsNumber: Integer = _;
+    var roundsPerTick: Integer = _;
+    var islandPopulation: Integer = _;
+
+    try {
+      val prop = new Properties()
+      prop.load(new FileInputStream(PROPERTIES_FILE));
+
+      algorithmName = prop.getProperty(ALGORITHM_NAME_PROP)
+
+      islandsNumber = new Integer(prop.getProperty(ROUNDS_PER_TICK_PROP))
+      roundsPerTick = new Integer(prop.getProperty(ROUNDS_PER_TICK_PROP))
+      islandPopulation = new Integer(prop.getProperty(ROUNDS_PER_TICK_PROP))
+    } catch { case e: Exception =>
+      e.printStackTrace()
+      sys.exit(1)
+    }
+
+      val system = new CoreSystem(islandsNumber, roundsPerTick, islandPopulation, algorithmName, testOperator, testAgentProvider)
   }
 }
