@@ -16,13 +16,6 @@ import scala.concurrent.duration._
 import scala.language.postfixOps
 import scala.util.{Failure, Random, Success}
 
-val PROPERTIES_FILE = "emas.properties";
-val ALGORITHM_NAME_PROP = "algorithm-name";
-
-val ISLANDS_NUMBER_PROP = "islands-number";
-val ROUNDS_PER_TICK_PROP = "rounds-per-tick";
-val ISLAND_POPULATION_PROP = "island-population";
-
 class CoreSystem(islandsNumber: Integer,
                  roundsPerTick: Integer,
                  islandPopulation: Integer,
@@ -61,7 +54,7 @@ class CoreSystem(islandsNumber: Integer,
 
   //schedule simulation ending
   actorSystem.scheduler.scheduleOnce(10 seconds) {
-    Future.sequence(islands.map(_ ? Summary)).map(_.collect{
+    Future.sequence(islands.map(_ ? Summary)).map(_.collect {
       case AgentMessage(agent) =>
         agent
     }).onComplete {
@@ -84,6 +77,12 @@ class CoreSystem(islandsNumber: Integer,
 
 object CoreSystem {
 
+  val PropertiesFile = "src/main/resources/emas.properties"
+  val AlgorithmNameProperty = "algorithm-name"
+  val IslandsNumberProperty = "islands-number"
+  val RoundsPerTickProperty = "rounds-per-tick"
+  val IslandPopulationProperty = "island-population"
+
   private val testOperator = new Operator()
 
   private def testAgentProvider(operator: Operator): Agent = {
@@ -94,26 +93,20 @@ object CoreSystem {
 
   def main(args: Array[String]): Unit = {
 
-    var algorithmName: String = _;
+    val prop = new Properties()
+    prop.load(new FileInputStream(PropertiesFile))
 
-    var islandsNumber: Integer = _;
-    var roundsPerTick: Integer = _;
-    var islandPopulation: Integer = _;
-
-    try {
-      val prop = new Properties()
-      prop.load(new FileInputStream(PROPERTIES_FILE));
-
-      algorithmName = prop.getProperty(ALGORITHM_NAME_PROP)
-
-      islandsNumber = new Integer(prop.getProperty(ROUNDS_PER_TICK_PROP))
-      roundsPerTick = new Integer(prop.getProperty(ROUNDS_PER_TICK_PROP))
-      islandPopulation = new Integer(prop.getProperty(ROUNDS_PER_TICK_PROP))
-    } catch { case e: Exception =>
-      e.printStackTrace()
-      sys.exit(1)
+    val (algorithmName, islandsNumber, roundsPerTick, islandPopulation) = try {
+      (prop.getProperty(AlgorithmNameProperty),
+        prop.getProperty(IslandsNumberProperty).toInt,
+        prop.getProperty(RoundsPerTickProperty).toInt,
+        prop.getProperty(IslandPopulationProperty).toInt)
+    } catch {
+      case e: Exception =>
+        e.printStackTrace()
+        sys.exit(1)
     }
 
-      val system = new CoreSystem(islandsNumber, roundsPerTick, islandPopulation, algorithmName, testOperator, testAgentProvider)
+    val system = new CoreSystem(islandsNumber, roundsPerTick, islandPopulation, algorithmName, testOperator, testAgentProvider)
   }
 }
