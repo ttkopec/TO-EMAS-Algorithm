@@ -1,18 +1,18 @@
 package pl.edu.agh.to.agent;
 
 import pl.edu.agh.to.genotype.Genotype;
-import pl.edu.agh.to.operators.Operator;
+import pl.edu.agh.to.operators.Operators;
 
 public class Agent {
 
     private Genotype genotype;
     private double energy;
-    private Operator operator;
+    private Operators operators;
 
-    public Agent(Genotype genotype, double energy, Operator operator) {
+    public Agent(Genotype genotype, double energy, Operators operators) {
         this.genotype = genotype;
         this.energy = energy;
-        this.operator = operator;
+        this.operators = operators;
 
     }
 
@@ -26,7 +26,7 @@ public class Agent {
     }
 
     public int getFitness() {
-        return operator.evaluation(this);
+        return operators.evaluation(this);
     }
 
     public double getEnergy() {
@@ -38,14 +38,14 @@ public class Agent {
     }
 
     public boolean isAlive() {
-        return operator.selection(this);
+        return operators.selection(this,0);
     }
 
     public Agent mutate(int degree) {
-        return operator.mutate(this, degree);
+        return operators.mutation(this, degree);
     }
 
     public Agent cross(Agent entity){
-        return operator.copulate(this, entity);
+        return operators.crossOver(this, entity,50);
     }
 }

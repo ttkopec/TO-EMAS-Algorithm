@@ -5,7 +5,7 @@ import akka.pattern.ask
 import akka.util.Timeout
 import pl.edu.agh.to.agent.Agent
 import pl.edu.agh.to.genotype.Genotype
-import pl.edu.agh.to.operators.Operator
+import pl.edu.agh.to.operators.Operators
 
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -16,8 +16,8 @@ import scala.util.{Failure, Random, Success}
 class CoreSystem(islandsNumber: Int,
                  roundsPerTick: Int,
                  islandPopulation: Int,
-                 operator: Operator,
-                 agentProvider: Operator => Agent) {
+                 operator: Operators,
+                 agentProvider: Operators => Agent) {
 
   import Island._
 
@@ -73,9 +73,9 @@ class CoreSystem(islandsNumber: Int,
 
 object CoreSystem {
 
-  private val testOperator = new Operator()
+  private val testOperator = new Operators()
 
-  private def testAgentProvider(operator: Operator): Agent = {
+  private def testAgentProvider(operator: Operators): Agent = {
     val genotype = new Genotype(Random.nextInt(1000).toString)
     new Agent(genotype, 100, operator)
   }
