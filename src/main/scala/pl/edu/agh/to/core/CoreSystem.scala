@@ -1,5 +1,6 @@
 package pl.edu.agh.to.core
 
+import java.util
 import akka.actor.{ActorSystem, Props}
 import akka.pattern.ask
 import akka.util.Timeout
@@ -75,19 +76,11 @@ object CoreSystem {
 
   private val testOperator = new Operators()
 
-<<<<<<< HEAD
   private def testAgentProvider(operator: Operators): Agent = {
-    val genotype = new Genotype(Random.nextInt(1000).toString)
-<<<<<<< HEAD
-    new Agent(genotype, 100, new AgentConfig(100, 20, 0, new Operators()))
-=======
-=======
-  private def testAgentProvider(operator: Operator): Agent = {
-    val genotype = new Genotype(genotyp)
->>>>>>> replaced string genotype with list of doubles
-    //TODO set proper values
-    new Agent(genotype, 100, new AgentConfig(0, 0, 0, operator))
->>>>>>> fix
+    var genotype = new Genotype(new util.ArrayList[java.lang.Double]())
+    var config = new AgentConfig(100, 20, 0, new Operators())
+    new Agent(genotype, 20, config)
+
   }
 
 

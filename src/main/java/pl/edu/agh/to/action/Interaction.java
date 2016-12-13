@@ -2,7 +2,7 @@ package pl.edu.agh.to.action;
 
 
 import pl.edu.agh.to.agent.Agent;
-import pl.edu.agh.to.operators.Operator;
+import pl.edu.agh.to.operators.Operators;
 
 import java.util.Optional;
 import java.util.Random;
@@ -17,13 +17,13 @@ public class Interaction {
     }
 
     public Optional<Agent> interact(){
-        Operator o = new Operator();
+        Operators o = firstAgent.getConfig().getOperators();
         Optional<Agent> result = Optional.empty();
         if(firstAgent.getEnergy() > firstAgent.getConfig().getReproductionEnergy()
                 && secondAgent.getEnergy() > secondAgent.getConfig().getReproductionEnergy()
                 && firstAgent.getEnergy() + secondAgent.getEnergy() > firstAgent.getConfig().getStartEnergy()) {
-            Agent newAgent = o.copulate(firstAgent, secondAgent);
-            newAgent = o.mutate(newAgent, new Random().nextInt() % 100);
+            Agent newAgent = o.crossOver(firstAgent, secondAgent, 0);
+            newAgent = o.mutation(newAgent, new Random().nextInt() % 100);
             result = Optional.of(newAgent);
         }
         return result;

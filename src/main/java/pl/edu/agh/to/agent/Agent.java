@@ -26,7 +26,7 @@ public class Agent {
     }
 
     public int getFitness() {
-        return config.getOperator().evaluation(this);
+        return config.getOperators().evaluation(this);
     }
 
     public double getEnergy() {
