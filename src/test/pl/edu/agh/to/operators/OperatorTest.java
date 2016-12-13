@@ -10,7 +10,7 @@ import static org.junit.Assert.*;
  * Created by tkopec on 04.12.16.
  */
 public class OperatorTest {
-    private Operator operator = new Operator();
+    private Operators operator = new Operators();
     private Agent agent = new Agent(null, 0, operator);
 
     @Test(expected = NumberFormatException.class)
@@ -36,10 +36,16 @@ public class OperatorTest {
                 agent.mutate(100));
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void testCrossOverEnergy() {
+        agent.setEnergy(50);
+        agent.cross(new Agent(new Genotype("0984324"), 10, null));
+    }
+
     @Test
-    public void testCrossing() {
+    public void testCrossOver() {
         agent.setGenotype(new Genotype("123445665432432524566857634"));
         agent.setEnergy(50);
-        assertNotEquals(agent, agent.cross(new Agent(new Genotype("0984324"), 10, null)));
+        assertNotEquals(agent, agent.cross(new Agent(new Genotype("0984324"), 30, null)));
     }
 }
