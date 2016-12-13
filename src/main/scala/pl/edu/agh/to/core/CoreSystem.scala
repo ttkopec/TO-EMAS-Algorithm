@@ -1,14 +1,15 @@
 package pl.edu.agh.to.core
 
+import java.util
 import akka.actor.{ActorSystem, Props}
 import akka.pattern.ask
 import akka.util.Timeout
-import pl.edu.agh.to.agent.Agent
+import pl.edu.agh.to.agent.{Agent, AgentConfig}
 import pl.edu.agh.to.genotype.Genotype
 import pl.edu.agh.to.operators.Operators
 
-import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 import scala.concurrent.duration._
 import scala.language.postfixOps
 import scala.util.{Failure, Random, Success}
@@ -76,8 +77,10 @@ object CoreSystem {
   private val testOperator = new Operators()
 
   private def testAgentProvider(operator: Operators): Agent = {
-    val genotype = new Genotype(Random.nextInt(1000).toString)
-    new Agent(genotype, 100, operator)
+    var genotype = new Genotype(new util.ArrayList[java.lang.Double]())
+    var config = new AgentConfig(100, 20, 0, new Operators())
+    new Agent(genotype, 20, config)
+
   }
 
 

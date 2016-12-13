@@ -1,8 +1,10 @@
 package pl.edu.agh.to.operators;
 
 import pl.edu.agh.to.agent.Agent;
+import pl.edu.agh.to.agent.AgentConfig;
 import pl.edu.agh.to.genotype.Genotype;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 import static java.lang.Math.abs;
@@ -53,6 +55,6 @@ public class CrossOverOperator {
         father.setEnergy(father.getEnergy()-startingEnergy/2);
         mother.setEnergy(mother.getEnergy()-startingEnergy/2);
         double childEnergy = startingEnergy;
-        return new Agent(new Genotype(genotype.toString()), childEnergy, this.rootOperators);
+        return new Agent(new Genotype(new ArrayList<Double>()), childEnergy, new AgentConfig(100, 20, 0, new Operators()));
     }
 }

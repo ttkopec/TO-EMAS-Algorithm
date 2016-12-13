@@ -3,6 +3,7 @@ package pl.edu.agh.to.operators;
 import pl.edu.agh.to.agent.Agent;
 import pl.edu.agh.to.genotype.Genotype;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 import static java.lang.Math.abs;
@@ -28,7 +29,7 @@ public class MutationOperator {
             int value = abs(rand.nextInt() % 9 + 1);
             mutation=mutation.replace(index, index + 1, Integer.toString(value));
         }
-        subject.setGenotype(new Genotype(mutation.toString()));
+        subject.setGenotype(new Genotype(new ArrayList<Double>()));
         return subject;
     }
 }
