@@ -3,25 +3,26 @@ package pl.edu.agh.to.core
 import java.io.FileInputStream
 import java.util.Properties
 
+import java.util
 import akka.actor.{ActorSystem, Props}
 import akka.pattern.ask
 import akka.util.Timeout
-import pl.edu.agh.to.agent.Agent
+import pl.edu.agh.to.agent.{Agent, AgentConfig}
 import pl.edu.agh.to.genotype.Genotype
-import pl.edu.agh.to.operators.Operator
+import pl.edu.agh.to.operators.Operators
 
-import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 import scala.concurrent.duration._
 import scala.language.postfixOps
 import scala.util.{Failure, Random, Success}
 
-class CoreSystem(islandsNumber: Integer,
-                 roundsPerTick: Integer,
-                 islandPopulation: Integer,
+class CoreSystem(islandsNumber: Int,
+                 roundsPerTick: Int,
+                 islandPopulation: Int,
                  algorithmName: String,
-                 operator: Operator,
-                 agentProvider: Operator => Agent) {
+                 operator: Operators,
+                 agentProvider: Operators => Agent) {
 
   import Island._
 
@@ -77,17 +78,19 @@ class CoreSystem(islandsNumber: Integer,
 
 object CoreSystem {
 
+  private val testOperator = new Operators()
   val PropertiesFile = "src/main/resources/emas.properties"
   val AlgorithmNameProperty = "algorithm-name"
   val IslandsNumberProperty = "islands-number"
   val RoundsPerTickProperty = "rounds-per-tick"
   val IslandPopulationProperty = "island-population"
 
-  private val testOperator = new Operator()
 
-  private def testAgentProvider(operator: Operator): Agent = {
-    val genotype = new Genotype(Random.nextInt(10000).toString)
-    new Agent(genotype, 100, operator)
+  private def testAgentProvider(operator: Operators): Agent = {
+    var genotype = new Genotype(new util.ArrayList[java.lang.Double]())
+    var config = new AgentConfig(100, 20, 0, new Operators())
+    new Agent(genotype, 20, config)
+
   }
 
 

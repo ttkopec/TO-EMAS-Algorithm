@@ -4,13 +4,14 @@ import akka.actor.{Actor, ActorRef, Props}
 import pl.edu.agh.to.agent.Agent
 import pl.edu.agh.to.core.Island._
 import pl.edu.agh.to.core.Reaper.WatchMe
-import pl.edu.agh.to.operators.{Operator, iOperator}
+import pl.edu.agh.to.operators.{Operators, iOperators}
+
 
 import scala.collection.mutable.{Set => MSet}
 import scala.concurrent.Future
 import scala.util.Random
 
-class Island(operator: iOperator, roundsPerTick: Int) extends Actor {
+class Island(operator: iOperators, roundsPerTick: Int) extends Actor {
 
   import context.dispatcher
 
@@ -67,12 +68,12 @@ class Island(operator: iOperator, roundsPerTick: Int) extends Actor {
     agentsSnapshot.retain(_.isAlive)
     val mutationNumber = Random.nextInt(agents.size / 5) + 1
     for (agent <- agentsSnapshot.toStream.sortBy(_ => Random.nextInt()).take(mutationNumber)) {
-      operator.mutate(agent, Random.nextInt(4) + 1)
+      operator.mutation(agent, Random.nextInt(4) + 1)
     }
     agentsSnapshot.retain(_.isAlive)
     val newGeneration = agentsSnapshot.toStream.sortBy(_ => Random.nextInt()).grouped(2).collect {
       case Stream(a, b) =>
-        operator.copulate(a, b)
+        operator.crossOver(a, b,50)
     }.toSet
     newGeneration | agentsSnapshot
   }
@@ -100,5 +101,5 @@ object Island {
     looser.setEnergy(looser.getEnergy - transferredEnergy)
   }
 
-  def props(operator: Operator, roundsPerTick: Int): Props = Props(new Island(operator, roundsPerTick))
+  def props(operator: Operators, roundsPerTick: Int): Props = Props(new Island(operator, roundsPerTick))
 }
