@@ -21,7 +21,7 @@ public class CrossOverOperator {
     }
 
     public Agent crossOver(Agent father, Agent mother, double startingEnergy) {
-
+        AgentConfig config = father.getConfig();
         if(startingEnergy/2>father.getEnergy() || startingEnergy/2>mother.getEnergy())
             throw new IllegalArgumentException("Parents dont have enough energy to sustain new child");
 
@@ -52,9 +52,11 @@ public class CrossOverOperator {
         }
         for (int j = i; j < maxSize; j++)
             genotype.append(longerGenotype.charAt(j));
-        father.setEnergy(father.getEnergy()-startingEnergy/2);
-        mother.setEnergy(mother.getEnergy()-startingEnergy/2);
-        double childEnergy = startingEnergy;
+        Double fatherTransfer = Math.min(father.getEnergy(), config.getReproductionEnergy());
+        Double motherTransfer = Math.min(mother.getEnergy(), config.getReproductionEnergy());
+        father.setEnergy(father.getEnergy() - fatherTransfer);
+        mother.setEnergy(mother.getEnergy() - motherTransfer);
+        double childEnergy = fatherTransfer + motherTransfer;
         return new Agent(new Genotype(new ArrayList<Double>()), childEnergy, new AgentConfig(100, 20, 0, new Operators()));
     }
 }

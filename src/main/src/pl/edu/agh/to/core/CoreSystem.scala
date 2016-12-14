@@ -1,9 +1,9 @@
 package pl.edu.agh.to.core
 
 import java.io.FileInputStream
+import java.util
 import java.util.Properties
 
-import java.util
 import akka.actor.{ActorSystem, Props}
 import akka.pattern.ask
 import akka.util.Timeout
@@ -87,8 +87,8 @@ object CoreSystem {
 
 
   private def testAgentProvider(operator: Operators): Agent = {
-    var genotype = new Genotype(new util.ArrayList[java.lang.Double]())
-    var config = new AgentConfig(100, 20, 0, new Operators())
+    val genotype = new Genotype(new util.ArrayList[java.lang.Double]())
+    val config = new AgentConfig(100, 20, 0, new Operators())
     new Agent(genotype, 20, config)
 
   }

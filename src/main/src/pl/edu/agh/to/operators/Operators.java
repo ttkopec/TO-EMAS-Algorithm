@@ -1,15 +1,9 @@
 package pl.edu.agh.to.operators;
 
 import pl.edu.agh.to.agent.Agent;
-import pl.edu.agh.to.genotype.Genotype;
-
-import java.util.Random;
 
 import static java.lang.Math.abs;
 
-/**
- * Created by krzys on 04.12.2016.
- */
 public class Operators implements iOperators {
 
     private CrossOverOperator crossOverOperator=new CrossOverOperator(this);

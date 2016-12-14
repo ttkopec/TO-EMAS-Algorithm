@@ -1,7 +1,6 @@
 package pl.edu.agh.to.agent;
 
 import pl.edu.agh.to.genotype.Genotype;
-import pl.edu.agh.to.operators.Operators;
 
 public class Agent {
 
