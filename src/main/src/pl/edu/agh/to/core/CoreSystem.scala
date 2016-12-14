@@ -1,6 +1,9 @@
 package pl.edu.agh.to.core
 
+import java.io.FileInputStream
 import java.util
+import java.util.Properties
+
 import akka.actor.{ActorSystem, Props}
 import akka.pattern.ask
 import akka.util.Timeout
@@ -17,10 +20,13 @@ import scala.util.{Failure, Random, Success}
 class CoreSystem(islandsNumber: Int,
                  roundsPerTick: Int,
                  islandPopulation: Int,
+                 algorithmName: String,
                  operator: Operators,
                  agentProvider: Operators => Agent) {
 
   import Island._
+
+  println("Init " + algorithmName)
 
   val actorSystem = ActorSystem("EMAS_simulation")
   val islandProps = Island.props(operator, roundsPerTick)
@@ -49,7 +55,7 @@ class CoreSystem(islandsNumber: Int,
 
   //schedule simulation ending
   actorSystem.scheduler.scheduleOnce(10 seconds) {
-    Future.sequence(islands.map(_ ? Summary)).map(_.collect{
+    Future.sequence(islands.map(_ ? Summary)).map(_.collect {
       case AgentMessage(agent) =>
         agent
     }).onComplete {
@@ -68,23 +74,42 @@ class CoreSystem(islandsNumber: Int,
         islands.foreach(_ ! Stop)
     }
   }
-
-
 }
 
 object CoreSystem {
 
   private val testOperator = new Operators()
+  val PropertiesFile = "src/main/resources/emas.properties"
+  val AlgorithmNameProperty = "algorithm-name"
+  val IslandsNumberProperty = "islands-number"
+  val RoundsPerTickProperty = "rounds-per-tick"
+  val IslandPopulationProperty = "island-population"
+
 
   private def testAgentProvider(operator: Operators): Agent = {
-    var genotype = new Genotype(new util.ArrayList[java.lang.Double]())
-    var config = new AgentConfig(100, 20, 0, new Operators())
+    val genotype = new Genotype(new util.ArrayList[java.lang.Double]())
+    val config = new AgentConfig(100, 20, 0, new Operators())
     new Agent(genotype, 20, config)
 
   }
 
 
   def main(args: Array[String]): Unit = {
-      val system = new CoreSystem(10, 20, 30, testOperator, testAgentProvider)
+
+    val prop = new Properties()
+    prop.load(new FileInputStream(PropertiesFile))
+
+    val (algorithmName, islandsNumber, roundsPerTick, islandPopulation) = try {
+      (prop.getProperty(AlgorithmNameProperty),
+        prop.getProperty(IslandsNumberProperty).toInt,
+        prop.getProperty(RoundsPerTickProperty).toInt,
+        prop.getProperty(IslandPopulationProperty).toInt)
+    } catch {
+      case e: Exception =>
+        e.printStackTrace()
+        sys.exit(1)
+    }
+
+    val system = new CoreSystem(islandsNumber, roundsPerTick, islandPopulation, algorithmName, testOperator, testAgentProvider)
   }
 }
