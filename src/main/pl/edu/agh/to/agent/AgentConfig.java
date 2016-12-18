@@ -1,18 +1,14 @@
 package pl.edu.agh.to.agent;
 
-import pl.edu.agh.to.operators.Operators;
-
 public class AgentConfig {
     private final double reproductionEnergy;
     private final double startEnergy;
     private final double deathEnergy;
-    private final Operators operator;
 
-    public AgentConfig(double reproductionEnergy, double startEnergy, double deathEnergy, Operators operator) {
+    public AgentConfig(double reproductionEnergy, double startEnergy, double deathEnergy) {
         this.startEnergy = startEnergy;
         this.reproductionEnergy = reproductionEnergy;
         this.deathEnergy = deathEnergy;
-        this.operator = operator;
     }
 
     public double getReproductionEnergy() {
@@ -27,7 +23,4 @@ public class AgentConfig {
         return deathEnergy;
     }
 
-    public Operators getOperators() {
-        return operator;
-    }
 }

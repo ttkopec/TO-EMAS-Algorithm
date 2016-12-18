@@ -23,11 +23,6 @@ public class Agent {
         this.genotype = genotype;
 
     }
-
-    public int getFitness() {
-        return config.getOperators().evaluation(this);
-    }
-
     public double getEnergy() {
         return energy;
     }

@@ -2,7 +2,8 @@ package pl.edu.agh.to.action;
 
 
 import pl.edu.agh.to.agent.Agent;
-import pl.edu.agh.to.operators.Operators;
+import pl.edu.agh.to.operators.CrossOverOperator;
+import pl.edu.agh.to.operators.MutationOperator;
 
 import java.util.Optional;
 import java.util.Random;
@@ -17,13 +18,14 @@ public class Interaction {
     }
 
     public Optional<Agent> interact(){
-        Operators o = firstAgent.getConfig().getOperators();
+        CrossOverOperator crossOverOperator = new CrossOverOperator();
+        MutationOperator mutationOperator=new MutationOperator();
         Optional<Agent> result = Optional.empty();
         if(firstAgent.getEnergy() > firstAgent.getConfig().getReproductionEnergy()
                 && secondAgent.getEnergy() > secondAgent.getConfig().getReproductionEnergy()
                 && firstAgent.getEnergy() + secondAgent.getEnergy() > firstAgent.getConfig().getStartEnergy()) {
-            Agent newAgent = o.crossOver(firstAgent, secondAgent, 0);
-            newAgent = o.mutation(newAgent, new Random().nextInt() % 100);
+            Agent newAgent = (Agent)crossOverOperator.execute(firstAgent, secondAgent, 0);
+            newAgent = (Agent)mutationOperator.execute(newAgent, new Random().nextInt() % 100);
             result = Optional.of(newAgent);
         }
         return result;
