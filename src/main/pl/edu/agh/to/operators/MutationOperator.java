@@ -3,6 +3,7 @@ package pl.edu.agh.to.operators;
 import pl.edu.agh.to.agent.Agent;
 import pl.edu.agh.to.genotype.Genotype;
 
+import java.util.List;
 import java.util.Random;
 
 import static java.lang.Math.abs;
@@ -10,25 +11,28 @@ import static java.lang.Math.abs;
 /**
  * Created by krzys on 13.12.2016.
  */
-public class MutationOperator {
+public class MutationOperator implements  iOperator{
 
-    Operators rootOperators;
+    public Object execute(Object ... args){
+        if(!checkTypes(args))
+            throw new IllegalArgumentException("Type checking of Arguments failed");
+        Agent subject= (Agent) args[0];
+        int degree= (Integer) args[1];
 
-    MutationOperator(Operators rootOperators){
-        this.rootOperators=rootOperators;
+        List genotype= (List)subject.getGenotype();
 
-    }
-    public Agent mutate(Agent subject, int degree) {
-        String genotype = subject.getGenotype().toString();
-        StringBuilder mutation = new StringBuilder(genotype);
-        Random rand = new Random();
-
-        for (int i = 0; i < degree; i++) {
-            int index = abs(rand.nextInt() % mutation.length());
-            int value = abs(rand.nextInt() % 9 + 1);
-            mutation=mutation.replace(index, index + 1, Integer.toString(value));
+        Random rand=new Random();
+        int size=genotype.size();
+        for(int i=0;i<degree;i++) {
+            int index=rand.nextInt()%size;
+            double value=rand.nextDouble();
+            genotype.set(index,value);
         }
-        subject.setGenotype(new Genotype(mutation.toString()));
         return subject;
+    }
+    public boolean checkTypes(Object ... args){
+        if(args.length==2 && args[0] instanceof  Agent && args[1] instanceof Integer)
+            return true;
+        return false;
     }
 }

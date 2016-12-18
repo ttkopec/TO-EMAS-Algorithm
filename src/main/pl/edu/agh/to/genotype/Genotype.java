@@ -1,17 +1,17 @@
 package pl.edu.agh.to.genotype;
 
+import java.util.List;
+
 public class Genotype {
-    public String getGenotyp() {
+
+    private final List<Double> genotyp;
+
+    public Object getGenotyp() {
         return genotyp;
     }
 
-    private final String genotyp;
-
-    public Genotype(String genotyp) {
-        this.genotyp = genotyp;
+    public Genotype(Object genotyp) {
+        this.genotyp = (List)genotyp;
     }
 
-    public String toString() {
-        return genotyp;
-    }
 }
