@@ -6,12 +6,11 @@ public class Genotype {
 
     private final List<Double> genotyp;
 
-    public Object getGenotyp() {
+    public Genotype(List<Double> genotyp) {
+        this.genotyp = genotyp;
+    }
+
+    public List<Double> getGenotyp() {
         return genotyp;
     }
-
-    public Genotype(Object genotyp) {
-        this.genotyp = (List)genotyp;
-    }
-
 }

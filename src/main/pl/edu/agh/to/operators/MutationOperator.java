@@ -1,7 +1,6 @@
 package pl.edu.agh.to.operators;
 
 import pl.edu.agh.to.agent.Agent;
-import pl.edu.agh.to.genotype.Genotype;
 
 import java.util.List;
 import java.util.Random;
@@ -13,20 +12,20 @@ import static java.lang.Math.abs;
  */
 public class MutationOperator implements  iOperator{
 
-    public Object execute(Object ... args){
-        if(!checkTypes(args))
+    public Object execute(Object ... args) {
+        if (!checkTypes(args))
             throw new IllegalArgumentException("Type checking of Arguments failed");
-        Agent subject= (Agent) args[0];
-        int degree= (Integer) args[1];
+        Agent subject = (Agent) args[0];
+        int degree = (Integer) args[1];
 
-        List genotype= (List)subject.getGenotype();
+        List genotype = (List) subject.getGenotype();
 
-        Random rand=new Random();
-        int size=genotype.size();
-        for(int i=0;i<degree;i++) {
-            int index=rand.nextInt()%size;
-            double value=rand.nextDouble();
-            genotype.set(index,value);
+        Random rand = new Random();
+        int size = genotype.size();
+        for (int i = 0; i < degree; i++) {
+            int index = rand.nextInt() % size;
+            double value = rand.nextDouble();
+            genotype.set(index, value);
         }
         return subject;
     }

@@ -1,6 +1,5 @@
 package pl.edu.agh.to.agent;
 
-
 public class AgentConfig {
     private final double reproductionEnergy;
     private final double startEnergy;
@@ -23,4 +22,5 @@ public class AgentConfig {
     public double getDeathEnergy() {
         return deathEnergy;
     }
+
 }

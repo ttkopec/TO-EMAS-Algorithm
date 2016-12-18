@@ -4,7 +4,9 @@ import pl.edu.agh.to.agent.Agent;
 import pl.edu.agh.to.agent.AgentConfig;
 import pl.edu.agh.to.genotype.Genotype;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 import static java.lang.Math.abs;
 
@@ -20,12 +22,11 @@ public class CrossOverOperator implements iOperator{
         Agent mother=(Agent) args[1];
         AgentConfig configFather = father.getConfig();
         AgentConfig configMother = mother.getConfig();
-
         Integer startingEnergy= (Integer)args[2];
         if(configFather.getReproductionEnergy() <startingEnergy/2 || configMother.getReproductionEnergy()<startingEnergy/2)
             throw new IllegalArgumentException("Parents dont have enough energy to support child");
 
-       List   childGenotype=new ArrayList<>();
+       List childGenotype=new ArrayList<>();
         Random rand=new Random();
 
         List motherGen = (List)mother.getGenotype();
