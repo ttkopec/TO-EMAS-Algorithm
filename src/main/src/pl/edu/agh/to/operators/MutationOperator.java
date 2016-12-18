@@ -10,7 +10,7 @@ import static java.lang.Math.abs;
 /**
  * Created by krzys on 13.12.2016.
  */
-public class MutationOperator implements  iOperator{
+public class MutationOperator implements Operator {
 
     public Object execute(Object ... args) {
         if (!checkTypes(args))

@@ -1,35 +1,37 @@
 package pl.edu.agh.to.core
 
 import java.io.FileInputStream
-import java.util
 import java.util.Properties
 
 import akka.actor.{ActorSystem, Props}
 import akka.pattern.ask
 import akka.util.Timeout
-import pl.edu.agh.to.agent.{Agent, AgentConfig}
+import pl.edu.agh.to.agent.{Agent, AgentConfig, AgentFactory}
+import pl.edu.agh.to.core.util.OperatorsConfig
 import pl.edu.agh.to.genotype.Genotype
-import pl.edu.agh.to.operators.Operators
+import pl.edu.agh.to.operators._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.concurrent.duration._
 import scala.language.postfixOps
 import scala.util.{Failure, Random, Success}
+import scala.collection.JavaConverters._
 
+//tutaj
 class CoreSystem(islandsNumber: Int,
                  roundsPerTick: Int,
                  islandPopulation: Int,
                  algorithmName: String,
-                 operator: Operators,
-                 agentProvider: Operators => Agent) {
+                 config: OperatorsConfig,
+                 agentProvider: OperatorsConfig => Agent) {
 
   import Island._
 
   println("Init " + algorithmName)
-
+  private val typedConfig = config.typedConfig[Agent]
   val actorSystem = ActorSystem("EMAS_simulation")
-  val islandProps = Island.props(operator, roundsPerTick)
+  val islandProps = Island.props(typedConfig, roundsPerTick)
   implicit val timeout = Timeout(2 seconds)
   val reaper = actorSystem.actorOf(Props[Reaper], s"Reaper")
   val islands = for (i <- 1 to islandsNumber) yield actorSystem.actorOf(islandProps, s"Island_$i")
@@ -37,7 +39,7 @@ class CoreSystem(islandsNumber: Int,
 
   //initialize simulation
   for (island <- islands) {
-    island ! Initialize((0 until islandPopulation).map(_ => agentProvider(operator)), reaper)
+    island ! Initialize((0 until islandPopulation).map(_ => agentProvider(config)), reaper)
   }
 
   //schedule simulation epochs execution
@@ -60,8 +62,9 @@ class CoreSystem(islandsNumber: Int,
         agent
     }).onComplete {
       case Success(agents) if agents.nonEmpty =>
-        val bestFitnes = agents.maxBy(_.getFitness)
-        println(s"Simulation finished with fitness level: ${bestFitnes.getFitness} and genotype: ${bestFitnes.getGenotype.getGenotyp}")
+        val bestFitness = agents.maxBy(typedConfig.evaluationOperator)
+        println(s"Simulation finished with fitness level: ${typedConfig.evaluationOperator(bestFitness)} " +
+          s"and genotype: ${bestFitness.getGenotype.getGenotyp.asScala.mkString("[ ", ", ", "]")}")
         islands.foreach(_ ! Stop)
       case Success(agents) =>
         println("No agents in system")
@@ -78,7 +81,6 @@ class CoreSystem(islandsNumber: Int,
 
 object CoreSystem {
 
-  private val testOperator = new Operators()
   val PropertiesFile = "src/main/resources/emas.properties"
   val AlgorithmNameProperty = "algorithm-name"
   val IslandsNumberProperty = "islands-number"
@@ -86,12 +88,11 @@ object CoreSystem {
   val IslandPopulationProperty = "island-population"
 
 
-  private def testAgentProvider(operator: Operators): Agent = {
-    val genotype = new Genotype(new util.ArrayList[java.lang.Double]())
-    val config = new AgentConfig(100, 20, 0, new Operators())
-    new Agent(genotype, 20, config)
-
+  def agentProvider(agentFactory: AgentFactory, genotypeProvider: () => Genotype)(operatorsConfig: OperatorsConfig): Agent = {
+    agentFactory.createAgent(genotypeProvider())
   }
+
+  def testGenotypeProvider(dim: Int): Genotype = new Genotype((0 until dim).map(_ => Double.box(Random.nextDouble())).asJava)
 
 
   def main(args: Array[String]): Unit = {
@@ -110,6 +111,25 @@ object CoreSystem {
         sys.exit(1)
     }
 
-    val system = new CoreSystem(islandsNumber, roundsPerTick, islandPopulation, algorithmName, testOperator, testAgentProvider)
+    val testConfig = new OperatorsConfig {
+      override def crossOverOperator: Operator = new CrossOverOperator
+
+      override def mutationOperator: Operator = new MutationOperator
+
+      override def selectionOperator: Operator = new SelectionOperator
+
+      override def evaluationOperator: Operator = new EvaluationOperator
+    }
+
+    val testAgentConfig = new AgentConfig(50, 200, 0)
+
+    val testAgentFactory = new AgentFactory(testAgentConfig)
+
+    val system = new CoreSystem(islandsNumber = islandsNumber,
+      roundsPerTick = roundsPerTick,
+      islandPopulation = islandPopulation,
+      algorithmName = algorithmName,
+      config = testConfig,
+      agentProvider = agentProvider(testAgentFactory, () => testGenotypeProvider(10)))
   }
 }

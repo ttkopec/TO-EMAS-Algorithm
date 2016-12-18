@@ -4,14 +4,13 @@ import akka.actor.{Actor, ActorRef, Props}
 import pl.edu.agh.to.agent.Agent
 import pl.edu.agh.to.core.Island._
 import pl.edu.agh.to.core.Reaper.WatchMe
-import pl.edu.agh.to.core.util.TrieSet
-import pl.edu.agh.to.operators.{Operators, iOperators}
+import pl.edu.agh.to.core.util.{TrieSet, TypedOperatorsConfig}
 
 import scala.collection.mutable.{Set => MSet}
 import scala.concurrent.Future
-import scala.util.{Random, Try}
+import scala.util.{Failure, Random, Success, Try}
 
-class Island(operator: iOperators, roundsPerTick: Int) extends Actor {
+class Island(config: TypedOperatorsConfig[Agent], roundsPerTick: Int) extends Actor {
 
   import context.dispatcher
 
@@ -19,13 +18,13 @@ class Island(operator: iOperators, roundsPerTick: Int) extends Actor {
   private var reaper: ActorRef = _
 
   override def receive: Receive = {
-    case Initialize(initAgents, r) =>
+    case Initialize(initAgents: Seq[Agent], r) =>
       agents ++= initAgents
       reaper = r
       reaper ! WatchMe(self)
     case Summary =>
       sender() ! (if (agents.nonEmpty) {
-        AgentMessage(agents.maxBy(_.getFitness))
+        AgentMessage(agents.maxBy(config.evaluationOperator))
       } else {
         ()
       })
@@ -40,23 +39,25 @@ class Island(operator: iOperators, roundsPerTick: Int) extends Actor {
       agents += agent
 
     case Migrate(isle) =>
-      isle ! AgentMessage(agents.maxBy(_.getEnergy))
+      isle ! AgentMessage(agents.maxBy(config.evaluationOperator))
 
     case Stop =>
       context.stop(self)
   }
 
-  def singleIteration: MSet[Agent] = {
+  def singleIteration: Unit = {
     val newGeneration = agents.toStream.sortBy(_ => Random.nextInt()).grouped(2).flatMap {
       case a #:: b #:: Stream.Empty =>
-        val config = a.getConfig
-        Try(config.getOperators.crossOver(a, b, config.getReproductionEnergy)).toOption
+        Try(config.crossOverOperator(a, b)) match {
+          case Success(opt) => opt
+          case Failure(_) => None
+        }
       case _ =>
         None
-    }
-    agents.retain(_.isAlive)
+    } map config.mutationOperator
+
     agents ++= newGeneration
-    agents.filter(a => a.getEnergy > a.getConfig.getStartEnergy)
+    agents.retain(config.selectionOperator)
   }
 }
 
@@ -74,5 +75,5 @@ object Island {
 
   case class Initialize(agents: Seq[Agent], reaper: ActorRef)
 
-  def props(operator: Operators, roundsPerTick: Int): Props = Props(new Island(operator, roundsPerTick))
+  def props[A](config: TypedOperatorsConfig[Agent], roundsPerTick: Int): Props = Props(new Island(config, roundsPerTick))
 }

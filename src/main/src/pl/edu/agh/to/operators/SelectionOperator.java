@@ -5,7 +5,7 @@ import pl.edu.agh.to.agent.Agent;
 /**
  * Created by krzys on 13.12.2016.
  */
-public class SelectionOperator implements iOperator{
+public class SelectionOperator implements Operator {
 
 
 

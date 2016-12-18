@@ -7,13 +7,13 @@ import java.util.List;
 /**
  * Created by krzys on 13.12.2016.
  */
-public class EvaluationOperator implements  iOperator{
+public class EvaluationOperator implements Operator {
     private final int A=10;
     public Object execute(Object ... args){
         if(!checkTypes(args))
             throw new IllegalArgumentException("Type checking of Arguments failed");
         Agent subject= (Agent) args[0];
-        List<Double> genotype= (List)subject.getGenotype();
+        List<Double> genotype= subject.getGenotype().getGenotyp();
         double fitness=A*genotype.size();
         int size=genotype.size();
         for(int i=0;i<size;i++) {
@@ -25,7 +25,7 @@ public class EvaluationOperator implements  iOperator{
     public boolean checkTypes(Object ... args){
         if(args.length==1 && args[0] instanceof  Agent) {
             Agent subject=(Agent) args[0];
-            if (subject.getGenotype() instanceof List)
+            if (subject.getGenotype().getGenotyp() != null)
                 return true;
         }
         return false;

@@ -10,7 +10,7 @@ public class AgentFactory {
         this.agentConfig = agentConfig;
     }
 
-    public Agent createAgent(Genotype genotype, double energy) {
-        return new Agent(genotype, energy, agentConfig);
+    public Agent createAgent(Genotype genotype) {
+        return new Agent(genotype, agentConfig.getStartEnergy(), agentConfig);
     }
 }
