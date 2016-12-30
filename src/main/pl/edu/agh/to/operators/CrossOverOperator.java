@@ -13,24 +13,24 @@ import static java.lang.Math.abs;
 /**
  * Created by krzys on 13.12.2016.
  */
-public class CrossOverOperator implements iOperator{
+public class CrossOverOperator implements Operator {
 
-    public Object execute(Object ... args){
-        if(!checkTypes(args))
+    public Object execute(Object... args) {
+        if (!checkTypes(args))
             throw new IllegalArgumentException("Type checking of Arguments failed");
-        Agent father= (Agent) args[0];
-        Agent mother=(Agent) args[1];
+        Agent father = (Agent) args[0];
+        Agent mother = (Agent) args[1];
         AgentConfig configFather = father.getConfig();
         AgentConfig configMother = mother.getConfig();
-        Integer startingEnergy= (Integer)args[2];
-        if(configFather.getReproductionEnergy() <startingEnergy/2 || configMother.getReproductionEnergy()<startingEnergy/2)
-            throw new IllegalArgumentException("Parents dont have enough energy to support child");
+        Integer startingEnergy = (Integer) args[2];
+        if (configFather.getReproductionEnergy() < startingEnergy / 2 || configMother.getReproductionEnergy() < startingEnergy / 2)
+            throw new IllegalArgumentException("Parents don't have enough energy to support child");
 
-       List childGenotype=new ArrayList<>();
-        Random rand=new Random();
+        List childGenotype = new ArrayList<>();
+        Random rand = new Random();
 
-        List motherGen = (List)mother.getGenotype();
-        List fatherGen = (List)father.getGenotype();
+        List motherGen = (List) mother.getGenotype();
+        List fatherGen = (List) father.getGenotype();
 
         int fatherSize = fatherGen.size();
         int motherSize = motherGen.size();
@@ -53,15 +53,16 @@ public class CrossOverOperator implements iOperator{
         }
         for (int j = i; j < maxSize; j++)
             childGenotype.add(longerGenotype.get(j));
-        father.setEnergy(father.getEnergy() - startingEnergy/2);
-        mother.setEnergy(mother.getEnergy() - startingEnergy/2);
+        father.setEnergy(father.getEnergy() - startingEnergy / 2);
+        mother.setEnergy(mother.getEnergy() - startingEnergy / 2);
         return new Agent(new Genotype(childGenotype), startingEnergy, new AgentConfig(100, 20, 0));
     }
-    public boolean checkTypes(Object ... args){
-        if(args.length==3 && args[0] instanceof  Agent && args[1] instanceof Agent && args[2] instanceof Integer) {
-            Agent father= (Agent) args[0];
-            Agent mother=(Agent) args[1];
-            if (father.getGenotype() instanceof List && mother.getGenotype() instanceof List)
+
+    public boolean checkTypes(Object... args) {
+        if (args.length == 3 && args[0] instanceof Agent && args[1] instanceof Agent && args[2] instanceof Integer) {
+            Agent father = (Agent) args[0];
+            Agent mother = (Agent) args[1];
+            if (father.getGenotype().getGenotyp() instanceof List && mother.getGenotype().getGenotyp() instanceof List)
                 return true;
         }
         return false;
