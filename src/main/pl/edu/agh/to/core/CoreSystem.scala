@@ -61,7 +61,7 @@ class CoreSystem(islandsNumber: Int,
     }).onComplete {
       case Success(agents) if agents.nonEmpty =>
         val bestFitnes = agents.maxBy(_.getFitness)
-        println(s"Simulation finished with fitness level: ${bestFitnes.getFitness} and genotype: ${bestFitnes.getGenotype.getGenotyp}")
+        println(s"Simulation finished with fitness level: ${bestFitnes.getFitness} and genotype: ${bestFitnes.getGenotype.get}")
         islands.foreach(_ ! Stop)
       case Success(agents) =>
         println("No agents in system")

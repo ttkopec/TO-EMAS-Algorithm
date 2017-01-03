@@ -14,7 +14,7 @@ public class EvaluationOperator implements Operator {
         if (!checkTypes(args))
             throw new IllegalArgumentException("Type checking of Arguments failed");
         Agent subject = (Agent) args[0];
-        List<Double> genotype = subject.getGenotype().getGenotyp();
+        List<Double> genotype = subject.getGenotype().get();
         double fitness = A * genotype.size();
         int size = genotype.size();
         for (int i = 0; i < size; i++) {
@@ -27,7 +27,7 @@ public class EvaluationOperator implements Operator {
     public boolean checkTypes(Object... args) {
         if (args.length == 1 && args[0] instanceof Agent) {
             Agent subject = (Agent) args[0];
-            if (subject.getGenotype().getGenotyp() instanceof List)
+            if (subject.getGenotype().get() instanceof List)
                 return true;
         }
         return false;

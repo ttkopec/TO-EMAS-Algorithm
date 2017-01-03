@@ -55,14 +55,14 @@ public class CrossOverOperator implements Operator {
             childGenotype.add(longerGenotype.get(j));
         father.setEnergy(father.getEnergy() - startingEnergy / 2);
         mother.setEnergy(mother.getEnergy() - startingEnergy / 2);
-        return new Agent(new Genotype(childGenotype), startingEnergy, new AgentConfig(100, 20, 0));
+        return new Agent(new Genotype<Double>(childGenotype), startingEnergy, father.getConfig());
     }
 
     public boolean checkTypes(Object... args) {
         if (args.length == 3 && args[0] instanceof Agent && args[1] instanceof Agent && args[2] instanceof Integer) {
             Agent father = (Agent) args[0];
             Agent mother = (Agent) args[1];
-            if (father.getGenotype().getGenotyp() instanceof List && mother.getGenotype().getGenotyp() instanceof List)
+            if (father.getGenotype().get() instanceof List && mother.getGenotype().get() instanceof List)
                 return true;
         }
         return false;

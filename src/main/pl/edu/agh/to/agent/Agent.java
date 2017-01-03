@@ -5,11 +5,11 @@ import pl.edu.agh.to.genotype.Genotype;
 public class Agent {
 
     private Genotype genotype;
-    private double energy;
+    private int energy;
 
     private AgentConfig config;
 
-    public Agent(Genotype genotype, double energy, AgentConfig config) {
+    public Agent(Genotype genotype, int energy, AgentConfig config) {
         this.genotype = genotype;
         this.energy = energy;
         this.config = config;
@@ -23,11 +23,11 @@ public class Agent {
         this.genotype = genotype;
 
     }
-    public double getEnergy() {
+    public int getEnergy() {
         return energy;
     }
 
-    public void setEnergy(double energy) {
+    public void setEnergy(int energy) {
         this.energy = energy;
     }
 

@@ -16,7 +16,7 @@ public class MutationOperator implements Operator {
         Agent subject = (Agent) args[0];
         int degree = (Integer) args[1];
 
-        List genotype = subject.getGenotype().getGenotyp();
+        List genotype = subject.getGenotype().get();
         Random rand = new Random();
         int size = genotype.size();
         for (int i = 0; i < degree; i++) {
