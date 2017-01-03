@@ -7,7 +7,8 @@ import akka.actor.{ActorSystem, Props}
 import akka.pattern.ask
 import akka.util.Timeout
 import pl.edu.agh.to.agent.{Agent, AgentConfig, AgentFactory}
-import pl.edu.agh.to.core.util.OperatorsConfig
+import pl.edu.agh.to.core.util.ArgumentsParser.NumericConstants
+import pl.edu.agh.to.core.util.{ArgumentsParser, OperatorsConfig}
 import pl.edu.agh.to.genotype.Genotype
 import pl.edu.agh.to.operators._
 
@@ -18,7 +19,6 @@ import scala.language.postfixOps
 import scala.util.{Failure, Random, Success}
 import scala.collection.JavaConverters._
 
-//tutaj
 class CoreSystem(islandsNumber: Int,
                  roundsPerTick: Int,
                  islandPopulation: Int,
@@ -97,39 +97,17 @@ object CoreSystem {
 
   def main(args: Array[String]): Unit = {
 
-    val prop = new Properties()
-    prop.load(new FileInputStream(PropertiesFile))
-
-    val (algorithmName, islandsNumber, roundsPerTick, islandPopulation) = try {
-      (prop.getProperty(AlgorithmNameProperty),
-        prop.getProperty(IslandsNumberProperty).toInt,
-        prop.getProperty(RoundsPerTickProperty).toInt,
-        prop.getProperty(IslandPopulationProperty).toInt)
-    } catch {
-      case e: Exception =>
-        e.printStackTrace()
-        sys.exit(1)
-    }
-
-    val testConfig = new OperatorsConfig {
-      override def crossOverOperator: Operator = new CrossOverOperator
-
-      override def mutationOperator: Operator = new MutationOperator
-
-      override def selectionOperator: Operator = new SelectionOperator
-
-      override def evaluationOperator: Operator = new EvaluationOperator
-    }
+    val (NumericConstants(islandNumber, islandPopulation, roundsPerTick), operatorConfig) = ArgumentsParser.parseArgs(args.toList)
 
     val testAgentConfig = new AgentConfig(50, 200, 0)
 
     val testAgentFactory = new AgentFactory(testAgentConfig)
 
-    val system = new CoreSystem(islandsNumber = islandsNumber,
+    val system = new CoreSystem(islandsNumber = islandNumber,
       roundsPerTick = roundsPerTick,
       islandPopulation = islandPopulation,
-      algorithmName = algorithmName,
-      config = testConfig,
+      algorithmName = "emas",
+      config = operatorConfig,
       agentProvider = agentProvider(testAgentFactory, () => testGenotypeProvider(10)))
   }
 }

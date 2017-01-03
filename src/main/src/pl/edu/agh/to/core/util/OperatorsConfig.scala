@@ -2,7 +2,6 @@ package pl.edu.agh.to.core.util
 
 import java.util.Optional
 
-import pl.edu.agh.to.agent.Agent
 import pl.edu.agh.to.operators.Operator
 
 trait OperatorsConfig { self =>
