@@ -86,6 +86,10 @@ object CoreSystem {
   val IslandsNumberProperty = "islands-number"
   val RoundsPerTickProperty = "rounds-per-tick"
   val IslandPopulationProperty = "island-population"
+  val CrossOverOperatorProperty = "cross-over"
+  val EvaluationOperatorProperty = "evaluation"
+  val MutationOperatorProperty = "mutation"
+  val SelectionOperatorProperty = "selection"
 
 
   def agentProvider(agentFactory: AgentFactory, genotypeProvider: () => Genotype)(operatorsConfig: OperatorsConfig): Agent = {

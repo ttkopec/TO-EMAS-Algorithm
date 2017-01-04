@@ -1,5 +1,9 @@
 package pl.edu.agh.to.core.util
 
+import java.io.FileInputStream
+import java.util.Properties
+
+import pl.edu.agh.to.core.CoreSystem
 import pl.edu.agh.to.operators._
 
 object ArgumentsParser {
@@ -51,7 +55,20 @@ object ArgumentsParser {
       }
 
     }
-    val parseEffect = nextOption(ParseState(), args)
+
+    val prop = new Properties()
+    prop.load(new FileInputStream(CoreSystem.PropertiesFile))
+
+    val initialState = ParseState(
+      islandNumb = prop.getProperty(CoreSystem.IslandsNumberProperty).toInt,
+      islandPopulation = prop.getProperty(CoreSystem.IslandPopulationProperty).toInt,
+      roundsPerTick = prop.getProperty(CoreSystem.RoundsPerTickProperty).toInt,
+      crossOverOperator = OperatorType.valueOf(prop.getProperty(CoreSystem.CrossOverOperatorProperty)).getInstance(),
+      evaluationOperator = OperatorType.valueOf(prop.getProperty(CoreSystem.EvaluationOperatorProperty)).getInstance(),
+      mutationOperator = OperatorType.valueOf(prop.getProperty(CoreSystem.MutationOperatorProperty)).getInstance(),
+      selectionOperator = OperatorType.valueOf(prop.getProperty(CoreSystem.SelectionOperatorProperty)).getInstance()
+    )
+    val parseEffect = nextOption(initialState, args)
 
     val config = new OperatorsConfig {
       override def crossOverOperator: Operator = parseEffect.crossOverOperator
